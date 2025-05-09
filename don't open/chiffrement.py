@@ -1,3 +1,4 @@
+'''
 import os
 from cryptography.fernet import Fernet
 
@@ -8,7 +9,7 @@ def serialiser_fichiers(liste_fichiers):
     Args:
         liste_fichiers (list): Une liste des chemins de fichiers à chiffrer.
     """
-    # Générer une clé de chiffrement. Il est CRUCIAL de conserver cette clé en sécurité !
+    # clef de secrutite a conserver 
     key = Fernet.generate_key()
     f = Fernet(key)
 
@@ -35,3 +36,43 @@ if __name__ == "__main__":
     # Exemple d'utilisation : chiffrer tous les fichiers .py et .html du répertoire courant
     fichiers_a_chiffrer = [f for f in os.listdir('.') if f.endswith(('.py', '.html'))]
     serialiser_fichiers(fichiers_a_chiffrer)
+'''
+# Extrement dangereux ! Extrem caution !! 
+
+import os 
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad 
+from Crypto.Random import get_random_bytes
+from tkinter import messagebox
+
+def generer_cle():
+    return get_random_bytes(32)  # AES-256
+
+def chiffrer_fichier(chemin_fichier, cle):
+    iv = get_random_bytes(16)  # Initialisation vector
+    cipher = AES.new(cle, AES.MODE_CBC, iv)
+
+    with open(chemin_fichier, 'rb') as f:
+        donnees = f.read()
+
+    donnees_pad = pad(donnees, AES.block_size)
+    donnees_chiffrees = cipher.encrypt(donnees_pad)
+
+    with open(chemin_fichier, 'wb') as f:
+        f.write(iv+donnees_chiffrees)
+
+def chiffrer_tous_les_fichiers():
+    cle = generer_cle()
+
+    messagebox.showinfo("Cle de chiffreement", f"Cle de chiffrement AES-256 generee : {cle.hex()}")
+
+    for fichier in os.listdir('.'):
+        if os.path.isfile(fichier):
+            try:
+                chiffrer_fichier(fichier,cle)
+                print(f"Le fichier '{fichier}' a été chiffré avec succès.")
+            except Exception as e:
+                print(f"Erreur lors du chiffrement de '{fichier}': {e}")
+
+if __name__ == "__main__":
+    chiffrer_tous_les_fichiers()

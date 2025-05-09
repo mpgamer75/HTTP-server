@@ -1,3 +1,4 @@
+'''''
 import os
 from cryptography.fernet import Fernet
 
@@ -35,3 +36,49 @@ if __name__ == "__main__":
     # Exemple d'utilisation : déchiffrer tous les fichiers .py et .html du répertoire courant
     fichiers_a_dechiffrer = [f for f in os.listdir('.') if f.endswith(('.py', '.html'))]
     dechiffrer_fichiers(fichiers_a_dechiffrer, CLE_DE_CHIFFREMENT)
+'''
+
+import os
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import unpad
+from tkinter import messagebox
+
+def charger_cle():
+    """Charge la clé AES-256 depuis un fichier."""
+    try:
+        with open("cle.key", "rb") as cle_fichier:
+            return cle_fichier.read()
+    except FileNotFoundError:
+        messagebox.showerror("Erreur", "Clé de chiffrement introuvable. Veuillez générer une clé.")
+        return None
+
+def dechiffrer_fichier(chemin_fichier, cle):
+    """Déchiffre un fichier en utilisant AES-256 en mode CBC."""
+    with open(chemin_fichier, 'rb') as f:
+        donnees = f.read()
+    
+    iv = donnees[:16]  # Les 16 premiers octets sont l'IV
+    donnees_chiffrees = donnees[16:]  # Le reste est le texte chiffré
+    
+    cipher = AES.new(cle, AES.MODE_CBC, iv)
+    try:
+        donnees_dechiffrees = unpad(cipher.decrypt(donnees_chiffrees), AES.block_size)
+        with open(f"{chemin_fichier}_dechiffre", 'wb') as f:
+            f.write(donnees_dechiffrees)
+        print(f"Le fichier '{chemin_fichier}' a été déchiffré avec succès.")
+    except ValueError:
+        print(f"Erreur lors du déchiffrement de '{chemin_fichier}': données corrompues ou clé incorrecte.")
+
+def dechiffrer_tous_les_fichiers():
+    """Déchiffre tous les fichiers du répertoire courant."""
+    cle = charger_cle()
+    if cle:
+        for fichier in os.listdir('.'):
+            if os.path.isfile(fichier) and not fichier.endswith('_dechiffre'):
+                try:
+                    dechiffrer_fichier(fichier, cle)
+                except Exception as e:
+                    print(f"Erreur lors du traitement de '{fichier}': {e}")
+
+if __name__ == "__main__":
+    dechiffrer_tous_les_fichiers()

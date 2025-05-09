@@ -1,5 +1,5 @@
 # Fonction qui permet de calculer la factoriele d'un nombre 
-
+''''
 n = int(input("Entrer un nombre: "))
 resultat = None
 
@@ -18,5 +18,19 @@ try:
         print(f"La factorielle de {n_int} est {resultat}")
 except ValueError:
     print("erreur, valeurs incorrects")
+'''
+
+'''
+# Generation de fichier bianaire 
+
+import os 
+
+with open("BinaryFile.bin",'wb') as f:
+    for i in range(10000):
+        f.write(os.urandom(1))
+
+
+print("Fichier binaire généré avec succès !")
+'''
 
 
