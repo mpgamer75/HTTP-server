@@ -33,4 +33,14 @@ with open("BinaryFile.bin",'wb') as f:
 print("Fichier binaire généré avec succès !")
 '''
 
+import os 
+import random
+
+with open("Random_Binary_File.bin",'wb') as f:
+    for i in range(10000):
+        f.write(os.urandom(1))
+        f.write(random.randint(0,255).to_bytes(1, byteorder='big'))
+
+
+
 
